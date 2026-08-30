@@ -2,14 +2,13 @@ import random
 import shutil
 import sys
 import time
-from enum import StrEnum
+from enum import IntEnum, StrEnum
 from dataclasses import dataclass
 
 
 # Screensaver options
 PARTICLES = 200
 PAUSE = 0.25
-MOVEMENT = 2
 
 # ANSI Escape Codes
 ANSI_HIDE_CURSOR = "\033[?25l"
@@ -34,12 +33,19 @@ class Shape(StrEnum):
     THORN = "þ"
 
 
+class Speed(IntEnum):
+    LOW = 1
+    MEDIUM = 3
+    HIGH = 5
+
+
 @dataclass(slots=True)
 class Particle:
     x: int
     y: int
     color: AnsiColor
     shape: Shape
+    speed: Speed
 
 
 def generate_particle(ncol: int, nrow: int) -> Particle:
@@ -47,7 +53,8 @@ def generate_particle(ncol: int, nrow: int) -> Particle:
         x=random.randint(0, ncol - 1),
         y=random.randint(0, nrow - 1),
         color=random.choice(list(AnsiColor)),
-        shape=random.choice(list(Shape))
+        shape=random.choice(list(Shape)),
+        speed=random.choice(list(Speed)),
     )
 
 
@@ -86,14 +93,14 @@ def main():
 
             # Update particle positions
             for particle in particles:
-                particle.y = (
-                    (particle.y + random.randint(-MOVEMENT, MOVEMENT))
-                    % nrow
+                particle.y += (
+                    random.randint(-particle.speed, particle.speed)
                 )
-                particle.x = (
-                    (particle.x + random.randint(-MOVEMENT, MOVEMENT))
-                    % ncol
+                particle.y %= nrow
+                particle.x += (
+                    random.randint(-particle.speed, particle.speed)
                 )
+                particle.x %= ncol
 
             time.sleep(PAUSE)
 
