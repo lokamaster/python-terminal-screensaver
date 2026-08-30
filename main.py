@@ -90,7 +90,7 @@ def main():
             time.sleep(PAUSE)
 
     except KeyboardInterrupt:
-        pass
+        sys.exit(0)
     finally:
         # Restore terminal defaults on exit
         sys.stdout.write(
