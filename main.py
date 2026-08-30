@@ -7,7 +7,6 @@ from dataclasses import dataclass
 
 
 # Screensaver options
-CHAR = "X"  # particle char
 PARTICLES = 200
 PAUSE = 0.25
 MOVEMENT = 2
@@ -28,11 +27,19 @@ class AnsiColor(StrEnum):
     BLUE = "\033[34m"
 
 
+class Shape(StrEnum):
+    CROSS = "X"
+    CIRCLE = "O"
+    AT = "@"
+    THORN = "þ"
+
+
 @dataclass(slots=True)
 class Particle:
     x: int
     y: int
     color: AnsiColor
+    shape: Shape
 
 
 def generate_particle(ncol: int, nrow: int) -> Particle:
@@ -40,6 +47,7 @@ def generate_particle(ncol: int, nrow: int) -> Particle:
         x=random.randint(0, ncol - 1),
         y=random.randint(0, nrow - 1),
         color=random.choice(list(AnsiColor)),
+        shape=random.choice(list(Shape))
     )
 
 
@@ -69,7 +77,7 @@ def main():
                 py = particle.y % nrow
                 # Reset color state immediately after CHAR
                 # to avoid color leaking
-                screen[py][px] = f"{particle.color}{CHAR}{ANSI_RESET}"
+                screen[py][px] = f"{particle.color}{particle.shape}{ANSI_RESET}"
 
             # Render entire frame in a single atomic I/O write
             frame = "\n".join("".join(row) for row in screen)
