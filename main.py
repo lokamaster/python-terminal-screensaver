@@ -47,6 +47,11 @@ class Particle:
     shape: Shape
     speed: Speed
 
+    def move(self) -> None:
+        """Move x and y  by a random amount based on speed."""
+        self.x += random.randint(-self.speed, self.speed)
+        self.y += random.randint(-self.speed, self.speed)
+        
 
 def generate_particle(ncol: int, nrow: int) -> Particle:
     return Particle(
@@ -63,8 +68,6 @@ def main():
     particles = [
         generate_particle(ncol, nrow) for _ in range(PARTICLES)
     ]
-
-
     try:
         # Enter alt buffer and hide cursor in one write
         sys.stdout.write(f"{ANSI_ALT_BUFFER}{ANSI_HIDE_CURSOR}")
@@ -93,14 +96,7 @@ def main():
 
             # Update particle positions
             for particle in particles:
-                particle.y += (
-                    random.randint(-particle.speed, particle.speed)
-                )
-                particle.y %= nrow
-                particle.x += (
-                    random.randint(-particle.speed, particle.speed)
-                )
-                particle.x %= ncol
+                particle.move()
 
             time.sleep(PAUSE)
 
